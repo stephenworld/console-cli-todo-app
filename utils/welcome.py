@@ -1,9 +1,7 @@
+from utils.action import exit
 actions = ["Add task", "View tasks", "Complete task", "Edit task", "Filter tasks", "Exit"]
 
 def welcome():
-  """
-  Interphase
-  """
   print("To-Do CLI Application\n")
 
   for idx, action in enumerate(actions):
@@ -17,8 +15,10 @@ def welcome():
 
   return user_action
 
-def add_task():
-  """
-  Add Task
-  """
-  
+def handle_restart():
+  print()
+  res = input("Do you want to do anything else. (y/N): ").strip().lower()
+  while res not in ["yes", "y"]:
+    return 
+    
+  return res
