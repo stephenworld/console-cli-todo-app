@@ -25,6 +25,7 @@ def add_task():
 
     while is_date_valid is False:
       clear_terminal()
+
       print(f"'{due_date_input}' Invalid. Try Current/Future Date.")
       due_date_input = input("Add your due date in this format [YYYY-MM-DD]: ").strip()
       is_date_valid = is_valid_date(due_date_input)
@@ -54,17 +55,39 @@ def add_task():
       "mins": mins
     }
 
+    break
+
+  status = ""
+  if has_due_date in ['yes', 'y']:
+    status = "later"
+  else:
+    status = "undated"
+
+  now = datetime.now()
+  creation_date = {
+    "year": str(now.year),
+    "month": str(now.month),
+    "day": str(now.day)
+  }
+  creation_time = {
+    "hour": str(now.hour),
+    "mins": str(now.minute)
+  }
 
   task = {
     "name": task_name,
     "description": task_description,
+    "creation": {
+      "date": creation_date,
+      "time": creation_time,
+    },
     "has_due": has_due_date in ['yes', 'y'],
     "due_info": {
       "date": due_date,
       "time": due_time,
     },
     "status": "",
-    "record_time": {}
+    "status": status
   }
 
   update_data(task)
