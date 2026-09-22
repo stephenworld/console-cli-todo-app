@@ -1,5 +1,5 @@
 from utils.welcome import welcome, handle_restart
-from utils.action import add_task, view_tasks, complete_task, edit_task, filter_tasks, exit
+from utils.action import add_task, view_tasks, complete_task, edit_task, exit
 from utils.component import clear_terminal
 
 clear_terminal()
@@ -21,7 +21,6 @@ while True:
 
   elif user_action == "2":
     view_tasks()
-
     res = handle_restart()
     if res in ["yes", "y"]:
       clear_terminal()
@@ -59,19 +58,6 @@ while True:
       break
 
   elif user_action == "5":
-    filter_tasks()
-
-    res = handle_restart()
-    if res in ["yes", "y"]:
-      clear_terminal()
-      print("Welcome Back!!!")
-      user_action = welcome()
-    else:
-      clear_terminal()
-      print("Successfully Exited the program")
-      break
-
-  elif user_action == "6":
     res = exit()
     if res == "yes" or res == "y":
       clear_terminal()

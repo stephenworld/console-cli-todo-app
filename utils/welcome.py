@@ -1,5 +1,5 @@
 from utils.action import exit
-actions = ["Add task", "View tasks", "Complete task", "Edit task", "Filter tasks", "Exit"]
+actions = ["Add task", "View tasks", "Complete task", "Edit task", "Exit"]
 
 def welcome():
   print("To-Do CLI Application\n")
