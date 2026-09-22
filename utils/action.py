@@ -1,4 +1,4 @@
-from utils.component import clear_terminal, is_valid_date, validate_date, is_valid_time, validate_time, update_data
+from utils.component import clear_terminal, is_valid_date, validate_date, is_valid_time, validate_time, update_data, load_tasks
 from datetime import datetime
 
 def add_task():
@@ -92,9 +92,71 @@ def add_task():
 
   update_data(task)
 
+
+def filter_task_by_status(status, tasks):
+  filter_task_by_status = [ {task_id: task} for task_id, task in tasks.items() if task["status"] == status]
+  return filter_task_by_status
+
 def view_tasks():
   clear_terminal()
-  print("View all tasks")
+  actions = ["view all task", "Filter by status"]
+
+  for idx, action in enumerate(actions, 1):
+    print(f"{idx}. {action}")
+
+  tasks = load_tasks()
+  user_action = input("Pick an action: ").strip()
+
+  while user_action not in ["1", "2"]:
+    print("Valid actions are [1]View all tasks [2]Filter by status")
+    user_action = input("Pick a valid action: ").strip()
+
+  if user_action == "1":
+    if not tasks:
+      print("Task is empty.")
+      return
+
+    for idx, task in tasks.items():
+      print(f"{idx}: {task}")
+
+  elif user_action == "2":
+    statuses = ["later", "undated", "completed"]
+    for idx, status in enumerate(statuses, 1):
+      print(f"{idx} {status.capitalize()}")
+
+    user_action = input("Select from the available statuses to filter: ").strip()
+    while user_action not in ["1", "2", "3"]:
+      print("Valid actions are filter by [1]later [2]undated [3]completed")
+      user_action = input("Select from the available statuses to filter: ").strip()
+
+    if user_action == "1":
+      status_data = filter_task_by_status("later", tasks)
+      if not status_data:
+        print("There isn't any tasks with the later status")
+        return
+
+      for task in status_data:
+        print(task)
+
+    elif user_action == "2":
+      status_data = filter_task_by_status("undated", tasks)
+      if not status_data:
+        print("There isn't any tasks with the undated status")
+        return
+
+      for task in status_data:
+        print(task)
+
+    elif user_action == "3":
+      status_data = filter_task_by_status("completed", tasks)
+      if not status_data:
+        print("There isn't any tasks with the completed status")
+        return
+
+      for task in status_data:
+        print(task)
+
+
 
 def complete_task():
   clear_terminal()

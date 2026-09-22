@@ -1,3 +1,8 @@
+import json
+from datetime import datetime
+
+
+json_file = "data/data.json"
 
 def clear_terminal():
   import sys
@@ -5,8 +10,6 @@ def clear_terminal():
   sys.stdout.flush()
 
 def is_valid_date(date_string):
-  from datetime import datetime
-
   date_format="%Y-%m-%d"
   try:
     input_date = datetime.strptime(date_string, date_format).date()
@@ -17,8 +20,6 @@ def is_valid_date(date_string):
     return False
 
 def is_valid_time(time_string):
-  from datetime import datetime
-
   time_format = "%H-%M" 
   try:
     datetime.strptime(time_string, time_format)
@@ -36,9 +37,6 @@ def validate_date(date_string):
 
 
 def update_data(task_data):
-  import json
-  json_file = "data/data.json"
-
   try:
     with open(json_file, "r") as file:
       data = json.load(file)
@@ -59,4 +57,12 @@ def update_data(task_data):
   print()
   print(f"Successfully added \"{task_data['name']}\" task with automatically generated ID: {new_id}")
 
+def load_tasks():
+  try:
+    with open(json_file, "r") as file:
+      data = json.load(file)
+  except FileNotFoundError:
+    data = {}
+
+  return data
 
