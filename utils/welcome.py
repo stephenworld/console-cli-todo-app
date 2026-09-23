@@ -4,8 +4,8 @@ actions = ["Add task", "View tasks", "Complete task", "Edit task", "Exit"]
 def welcome():
   print("To-Do CLI Application\n")
 
-  for idx, action in enumerate(actions):
-    print(f"{idx+1}. {action}")
+  for idx, action in enumerate(actions, 1):
+    print(f"[{idx}] {action}")
 
   user_action = input(f"\nEnter a valid action [1 - {len(actions)}]: ").strip()
   valid_actions = [str(nbr) for nbr in range(1, len(actions)+1, 1)]
