@@ -191,6 +191,18 @@ def complete_task():
   else:
     print("Action cancled")
 
+def edit_task_data(title, value):
+  print(f"Current Task {title}: {value}")
+  update = input(f"Update Task {title}: ").strip()
+  
+  while update == "":
+    print(f"Task {title} can't be empty")
+    update = input(f"Update Task {title}: ").strip()
+
+  print(f"{title} has been updated from '{value}' to '{update}'")
+
+  return update
+
 def edit_task():
   clear_terminal()
   tasks = load_tasks()
@@ -211,8 +223,8 @@ def edit_task():
     user_action = input("Select a task ID you want to edit: ").strip()
 
   task_data = tasks[user_action]
-
   clear_terminal()
+
   print(f"Showing full details for task {user_action}\n")
   
   name = task_data["name"]
@@ -228,13 +240,12 @@ def edit_task():
   print(f"Task Description: {description}")
   print(f"Creation Date / Time: {creation_full_date} / {creation_time}")
 
-  available_edit_options = [ "Name", "Description", "Creation" ]
-
+  available_edit_options = [ "Name", "Description"]
   if has_due:
     due_full_date = f"{due["date"]["year"]}-{due["date"]["month"]}-{due["date"]["day"]}"
     due_time = f"{due["time"]["hour"]}-{due["time"]["mins"]}"
     print(f"Due Date / Time: {due_full_date} / {due_time}")
-    available_edit_options = [ "Name", "Description", "Creation", "Due Date" ]
+    available_edit_options = [ "Name", "Description", "Due Date" ]
 
   print()
   print("Things editable")
@@ -250,30 +261,43 @@ def edit_task():
     print(f"Valid actions are {actions}")
     action = input("What would you edit: ").strip()
 
-  if action == "1":
-    """
-    Edit task Name
-    """
-    print("Edit task Name")
-  elif action == "2":
-    """
-    Edit task Description
-    """
-    print("Edit task Description")
-  elif action == "3":
-    """
-    Edit task creation date
-    """
-    print("Edit task creation date")
-  elif action == "4":
-    """
-    Edit task Due Date
-    """
-    print("Edit task Due Date")
-  else:
-    print("Invalid Actions")
+  is_editing = True
+  while is_editing:
 
-  
+    if action == "1":
+      new_val = edit_task_data("Name", name)
+      print()
+      name = new_val
+
+      user_action = input("Do you want to edit something else? [y/N]: ").strip().lower()
+
+      while user_action in ["yes", "y"]:
+        is_editing = True
+        clear_terminal()
+        print("Things editable")
+        for idx, option in enumerate(available_edit_options, 1):
+          print(f"[{idx}] {option}")
+
+        action = input("What would you edit: ").strip()
+
+      is_editing = False
+
+    elif action == "2":
+      new_val = edit_task_data("Description", description)
+      print()
+      description = new_val
+      break
+
+    elif action == "3":
+      """
+      Edit task Due Date
+      """
+      print("Edit task Due Date")
+    else:
+      print("Invalid Actions")
+      break
+
+  print(task_data)
 
 
 def exit():
