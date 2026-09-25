@@ -212,93 +212,94 @@ def edit_task():
 
   print_tasks(tasks.items())
   print()
-  user_action = input("Select a task ID you want to edit: ").strip()
-  while user_action == "":
+
+  selected_id = input("Select a task ID you want to edit: ").strip()
+  while selected_id == "":
     print("Task can't be empty")
-    user_action = input("Select a task ID you want to edit: ").strip()
+    selected_id = input("Select a task ID you want to edit: ").strip()
 
   available_task_id = [id for id in tasks]
-  while user_action not in available_task_id:
+  while selected_id not in available_task_id:
     print(f"Invalid task ID try any of these ID's {available_task_id}")
-    user_action = input("Select a task ID you want to edit: ").strip()
+    selected_id = input("Select a task ID you want to edit: ").strip()
 
-  task_data = tasks[user_action]
-  clear_terminal()
+  task_data = tasks[selected_id]
 
-  print(f"Showing full details for task {user_action}\n")
+  while True:
+    clear_terminal()
+    print(f"Showing full details for task {selected_id}\n")
   
-  name = task_data["name"]
-  description = task_data["description"]
-  creation = task_data["creation"]
-  has_due = task_data["has_due"]
-  due = task_data["due_info"]
+    name = task_data["name"]
+    description = task_data["description"]
+    creation = task_data["creation"]
+    has_due = task_data["has_due"]
+    due = task_data["due_info"]
 
-  creation_full_date = f"{creation["date"]["year"]}-{creation["date"]["month"]}-{creation["date"]["day"]}"
-  creation_time = f"{creation["time"]["hour"]}-{creation["time"]["mins"]}"
+    creation_full_date = f"{creation["date"]["year"]}-{creation["date"]["month"]}-{creation["date"]["day"]}"
+    creation_time = f"{creation["time"]["hour"]}-{creation["time"]["mins"]}"
 
-  print(f"Task Name: {name}")
-  print(f"Task Description: {description}")
-  print(f"Creation Date / Time: {creation_full_date} / {creation_time}")
+    print(f"Task Name: {name}")
+    print(f"Task Description: {description}")
+    print(f"Creation Date / Time: {creation_full_date} / {creation_time}")
 
-  available_edit_options = [ "Name", "Description"]
-  if has_due:
-    due_full_date = f"{due["date"]["year"]}-{due["date"]["month"]}-{due["date"]["day"]}"
-    due_time = f"{due["time"]["hour"]}-{due["time"]["mins"]}"
-    print(f"Due Date / Time: {due_full_date} / {due_time}")
-    available_edit_options = [ "Name", "Description", "Due Date" ]
+    editable_options = [ "Name", "Description", "Due Date" ]
 
-  print()
-  print("Things editable")
+    if has_due:
+      due_full_date = f"{due["date"]["year"]}-{due["date"]["month"]}-{due["date"]["day"]}"
+      due_time = f"{due["time"]["hour"]}-{due["time"]["mins"]}"
+      print(f"Due Date / Time: {due_full_date} / {due_time}")
 
-  for idx, option in enumerate(available_edit_options, 1):
-    print(f"[{idx}] {option}")
+    print()
+    print("Editable Options")
+    for idx, option in enumerate(editable_options, 1):
+      print(f"[{idx}] {option}")
 
-  print()
-  action = input("What would you edit: ").strip()
-  actions = [str(idx) for idx,_ in enumerate(available_edit_options, 1)]
+    print()
+    choice = input("What would you edit: ").strip()
 
-  while action not in actions:
-    print(f"Valid actions are {actions}")
-    action = input("What would you edit: ").strip()
+    if choice == "1":
+      task_data["name"] = edit_task_data("Name", name)
 
-  is_editing = True
-  while is_editing:
+    elif choice == "2":
+      task_data["description"] = edit_task_data("Description", description)
 
-    if action == "1":
-      new_val = edit_task_data("Name", name)
-      print()
-      name = new_val
+    elif choice == "3":
+      due_date_input = input("New due date [YYYY-MM-DD]: ").strip()
 
-      user_action = input("Do you want to edit something else? [y/N]: ").strip().lower()
+      while not is_valid_date(due_date_input):
+        print(f"'{due_date_input}' is invalid. Try a current/future date.")
+        due_date_input = input("New due date [YYYY-MM-DD]: ").strip()
+      year, month, day = validate_date(due_date_input)
 
-      while user_action in ["yes", "y"]:
-        is_editing = True
-        clear_terminal()
-        print("Things editable")
-        for idx, option in enumerate(available_edit_options, 1):
-          print(f"[{idx}] {option}")
+      due_time_input = input("New reminder time [Hour-Mins] (e.g. 14-30): ").strip()
+      while not is_valid_time(due_time_input):
+          print("Invalid Time. Enter [0-23]-[0-59].")
+          due_time_input = input("New reminder time [Hour-Mins]: ").strip()
 
-        action = input("What would you edit: ").strip()
+      hour, mins = validate_time(due_time_input)
+      task_data["has_due"] = True
+      task_data["status"] = "later"
+      task_data["due_info"] = {
+          "date": {"year": str(year), "month": str(month), "day": str(day)},
+          "time": {"hour": str(hour), "mins": str(mins)},
+      }
 
-      is_editing = False
-
-    elif action == "2":
-      new_val = edit_task_data("Description", description)
-      print()
-      description = new_val
-      break
-
-    elif action == "3":
-      """
-      Edit task Due Date
-      """
-      print("Edit task Due Date")
+      print("\nDue date and time updated.")
     else:
       print("Invalid Actions")
-      break
 
-  print(task_data)
+    tasks[selected_id] = task_data
+    with open(json_file, "w") as file:
+        import json
+        json.dump(tasks, file, indent=2)
 
+    clear_terminal()
+    print(f"\nTask '{selected_id}' updated and saved successfully.")
+    cont = input("\nDo you want to edit something else? [y/N]: ").strip().lower()
+
+    if cont not in ["y", "yes"]:
+        break
+    
 
 def exit():
   clear_terminal()
