@@ -68,13 +68,13 @@ def add_task():
 
   now = datetime.now()
   creation_date = {
-    "year": str(now.year),
-    "month": str(now.month),
-    "day": str(now.day)
+    "year": f"{int(now.year):04d}",
+    "month": f"{int(now.month):02d}",
+    "day": f"{int(now.day):02d}"
   }
   creation_time = {
-    "hour": str(now.hour),
-    "mins": str(now.minute)
+    "hour": f"{int(now.hour):02d}",
+    "mins": f"{int(now.minute):02d}"
   }
 
   task = {
@@ -247,7 +247,7 @@ def edit_task():
     if has_due:
       due_full_date = f"{due["date"]["year"]}-{due["date"]["month"]}-{due["date"]["day"]}"
       due_time = f"{due["time"]["hour"]}-{due["time"]["mins"]}"
-      print(f"Due Date / Time: {due_full_date} / {due_time}")
+      print(f"Due Date/Time: {due_full_date} / {due_time}")
 
     print()
     print("Editable Options")
@@ -269,6 +269,7 @@ def edit_task():
       while not is_valid_date(due_date_input):
         print(f"'{due_date_input}' is invalid. Try a current/future date.")
         due_date_input = input("New due date [YYYY-MM-DD]: ").strip()
+
       year, month, day = validate_date(due_date_input)
 
       due_time_input = input("New reminder time [Hour-Mins] (e.g. 14-30): ").strip()
@@ -278,11 +279,11 @@ def edit_task():
 
       hour, mins = validate_time(due_time_input)
       task_data["has_due"] = True
-      task_data["status"] = "later"
       task_data["due_info"] = {
           "date": {"year": str(year), "month": str(month), "day": str(day)},
           "time": {"hour": str(hour), "mins": str(mins)},
       }
+      task_data["status"] = "later"
 
       print("\nDue date and time updated.")
     else:

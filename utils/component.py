@@ -29,11 +29,11 @@ def is_valid_time(time_string):
 
 def validate_time(time_string):
   hour, mins = time_string.split('-')
-  return int(hour), int(mins)
+  return f"{int(hour):02d}", f"{int(mins):02d}"
 
 def validate_date(date_string):
   year, month, day = date_string.split('-')
-  return int(year), int(month), int(day)
+  return f"{int(year):04d}", f"{int(month):02d}", f"{int(day):02d}"
 
 
 def update_data(task_data):
@@ -71,26 +71,35 @@ def load_tasks():
 def update_task_status(data):
   for _, task in data.items():
     has_due_date = task["has_due"]
-    due_data = task["due_info"]
-    creation = task["creation"]
+    
+    status = task["status"]
+    if status == "completed":
+      continue
 
     if has_due_date:
-      creation_full_date = f"{creation["date"]["year"]}-{creation["date"]["month"]}-{creation["date"]["day"]}"
-      creation_time = f"{creation["time"]["hour"]}-{creation["time"]["mins"]}"
+      c_date = task["creation"]["date"]
+      d_date = task["due_info"]["date"]
+      c_time = task["creation"]["time"]
+      d_time = task["due_info"]["time"]
 
-      due_full_date = f"{due_data["date"]["year"]}-{due_data["date"]["month"]}-{due_data["date"]["day"]}"
-      due_time = f"{due_data["time"]["hour"]}-{due_data["time"]["mins"]}"
+      creation_str = f"{c_date['year']}-{c_date['month']}-{c_date['day']}"
+      due_str = f"{d_date['year']}-{d_date['month']}-{d_date['day']}"
 
-      if (creation_full_date > due_full_date or creation_time > due_time) and task["status"] != "completed":
+      creation_time_str = f"{c_time["hour"]}-{c_time["mins"]}"
+      due_time_str = f"{d_time["hour"]}-{d_time["mins"]}"
+
+      if (creation_str > due_str and creation_time_str > due_time_str):
         task["status"] = "overdue"
+      else:
+        task["status"] = "later"
 
   return data
 
 
 def print_tasks(tasks):
-  print("-"*110)
-  print(f"| {"ID":<5} | {"Task Name":<25} | {"Creation Date":<25} | {"Due Date":<25} | {"Status":<15} |")
-  print("-"*110)
+  print("-"*125)
+  print(f"| {"ID":<5} | {"Task Name":<40} | {"Creation Date":<25} | {"Due Date":<25} | {"Status":<15} |")
+  print("-"*125)
 
   for task_id, task in tasks:
     task_name = task['name']
@@ -100,6 +109,9 @@ def print_tasks(tasks):
 
     if has_due_date:
       dues_date = task['due_info']['date']['year'] + "-" + task['due_info']['date']['month'] + "-" + task['due_info']['date']['day']
-    status = task['status']
 
-    print(f"| {task_id:<5} | {task_name:<25} | {task_creation:<25} | {dues_date:<25} | {status:<15} |")
+    status = task['status']
+    print(f"| {task_id:<5} | {task_name:<40} | {task_creation:<25} | {dues_date:<25} | {status:<15} |")
+    print("-"*125)
+
+
